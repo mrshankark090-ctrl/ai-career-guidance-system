@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Career Guidance System</title>
+</head>
+<body>
+    <h1>AI Career Guidance System</h1>
+    <p>Discover a career that matches your interests!</p>
+
+    <form id="careerForm">
+        <label>Your Name:</label>
+        <input type="text" id="name" required>
+
+        <br><br>
+
+        <label>Your Interest:</label>
+        <select id="interest">
+            <option value="python">Python Programming</option>
+            <option value="web">Web Development</option>
+            <option value="ai">Artificial Intelligence</option>
+            <option value="data">Data Science</option>
+        </select>
+
+        <br><br>
+
+        <button type="submit">Find My Career</button>
+    </form>
+
+    <h2>Career Recommendation</h2>
+    <div id="result">Your result will appear here.</div>
+
+    <script>
+    document.getElementById("careerForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+
+        const result = document.getElementById("result");
+        result.textContent = "Finding your career...";
+
+        try {
+            const response = await fetch("/recommend", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    name: document.getElementById("name").value,
+                    interest: document.getElementById("interest").value
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Something went wrong");
+            }
+
+            result.textContent =
+                "Hello " + data.name +
+                "! Recommended career: " + data.career +
+                ". Skills to learn: " + data.skills.join(", ");
+        } catch (error) {
+            result.textContent = "Error: " + error.message;
+        }
+    });
+    </script>
+</body>
+</html>
