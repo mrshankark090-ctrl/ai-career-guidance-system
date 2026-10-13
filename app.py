@@ -1,5 +1,5 @@
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
 
@@ -24,16 +24,19 @@ careers = {
 
 @app.route("/")
 def home():
-    return "AI Career Guidance System is running!"
+    return render_template("index.html")
 
 @app.route("/recommend", methods=["POST"])
 def recommend():
     data = request.get_json(silent=True) or {}
+
     name = data.get("name", "").strip()
     interest = data.get("interest", "")
 
     if not name or interest not in careers:
-        return jsonify({"error": "Enter a valid name and interest"}), 400
+        return jsonify({
+            "error": "Enter a valid name and interest"
+        }), 400
 
     return jsonify({
         "name": name,
